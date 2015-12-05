@@ -1,13 +1,17 @@
 ﻿#$PCs = "CAORIPRODT349","CAORIPRODT350","CAWHATRUTALKINABOUTWILLIS"
 $PCs = Get-Content 'C:\scripts\PCs.txt'
 # MONTHLY TEST PATCHES
-$KBs = Get-Content 'C:\scripts\testKBs.txt'
+$KBs = Get-Content 'C:\scripts\CurrentMonthWU.txt'
 $pingStatusArray = New-Object -TypeName PSObject #Object array for onlien status
 $KBCount = 0 # !0 if has updates from $KBs
 $WinUpdates = @() #Object array of updates installed
 $JSONFile = @() # Full ending object array
 $WUStatus = $false # default WUStatus
 $checkUpdateList = @()
+
+# Rename the last output with yesterday's date 
+$theDate = (get-date).AddDays(-1).ToString("MM.dd.yyyy")
+Rename-Item "C:\Temp\PingStatus.json" -NewName "C:\Temp\PingStatus $theDate.json"
 
 Foreach($PC in $PCs) {
     

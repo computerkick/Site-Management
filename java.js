@@ -29,6 +29,7 @@ var WU;
 
 
 function getTheDate(vdate){
+    if (vdate != null){    
         testYear = vdate.substring(0,4);
         testMonth = vdate.substring(5,7);
         testDay = vdate.substring(9,10);
@@ -73,6 +74,7 @@ function getTheDate(vdate){
         }    
     return testMonth;
                 console.log(testMonth);
+    } else {return testMonth = "Unknown"}
 }
 
 /* ###########################################################################################
