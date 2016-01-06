@@ -32,7 +32,7 @@ function getTheDate(vdate){
     if (vdate != null){    
         testYear = vdate.substring(0,4);
         testMonth = vdate.substring(5,7);
-        testDay = vdate.substring(9,10);
+        testDay = vdate.substring(8,10);
         
         switch (testMonth) {
             case "1":
@@ -89,9 +89,14 @@ function createPCObject(PSArray) {
         var PCLongName = PSArray[i].PCName.value;
         var OnlineStatus = PSArray[i].OnlineStatus;
         var WUStatus = PSArray[i].WUStatus.TotalUpdateCount;
+		
+		if (!PSArray[i].ServiceTag){
+			var SNumber = "Unknown";
+		} else {
+			var SNumber = PSArray[i].ServiceTag.SerialNumber;
+		}		
         
         var VDefPass = PSArray[i].VirusDefDate;
-        
         getTheDate(VDefPass);
         var VDefDate = testMonth + " " + testDay + " " + testYear;
 
@@ -108,23 +113,24 @@ function createPCObject(PSArray) {
         if (OnlineStatus === true){
             OnlineStatus = "Online"
             if (WUStatus > 0 && VDefBubbleChange === "good"){
-                createCircle(PCShortName, PCLongName, OnlineStatus, WUStatus, VDef, VDefBubbleChange, " bubbleGood");
+                createCircle(PCShortName, SNumber, PCLongName, OnlineStatus, WUStatus, VDef, VDefBubbleChange, " bubbleGood");
             } else {
                 if (WUStatus === undefined || WUStatus <= 0){
                     WUStatus = 0;
                 }
-                createCircle(PCShortName, PCLongName, OnlineStatus, WUStatus, VDef, VDefBubbleChange, " bubbleIssue");
+                createCircle(PCShortName, SNumber, PCLongName, OnlineStatus, WUStatus, VDef, VDefBubbleChange, " bubbleIssue");
             }
         } else {
             OnlineStatus = "Offline"
             WUStatus = 0;
-            createCircle(PCShortName, PCLongName, OnlineStatus, WUStatus, VDef, VDefBubbleChange, " bubbleBad");
+			SNumber = "Unknown";
+            createCircle(PCShortName, SNumber, PCLongName, OnlineStatus, WUStatus, VDef, VDefBubbleChange, " bubbleBad");
         }
     }
 }
 
 //Create the HTML needed for the bubble
-function createCircle(short,long,status,wu,vd,vdefhighlight,className){
+function createCircle(short,serialnumber, long,status,wu,vd,vdefhighlight,className){
     //Build out the HTML for the on hover span
     statusHTML = "<h2>"+long+"</h2>";
     
@@ -132,6 +138,10 @@ function createCircle(short,long,status,wu,vd,vdefhighlight,className){
     if (status === "Online"){statusClass = "good"} else {statusClass = "bad"}
     statusHTML += "<div class="+statusClass+">Status: "+status+"</div>";
     
+	//Serial Number
+	if (serialnumber === "Unknown"){statusClass = "bad"} else {statusClass = "good"}
+	statusHTML += "<div class="+statusClass+">Seial Number: "+serialnumber+"</div>";
+	
     //Windows Update highlight in status div
     if (wu > 0){statusClass = "good"} else {statusClass = "bad"}
     statusHTML += "<div class="+statusClass+">Windows Update Count: "+wu+"</div>";

@@ -11,7 +11,7 @@ $checkUpdateList = @()
 
 # Rename the last output with yesterday's date 
 $theDate = (get-date).AddDays(-1).ToString("MM.dd.yyyy")
-Rename-Item "C:\Temp\PingStatus.json" -NewName "C:\Temp\PingStatus $theDate.json"
+Rename-Item "C:\Temp\PingStatus.js" -NewName "C:\Temp\PingStatus $theDate.js"
 
 Foreach($PC in $PCs) {
     
@@ -49,6 +49,10 @@ Foreach($PC in $PCs) {
             Add-Member -InputObject $WindowsUpdateList -MemberType NoteProperty -Name WinUpdateStatus -Value $WUStatus            
         }
         $KBCount = 0
+
+        #Get PC SN/Service Tag
+        $serviceTag = Get-WmiObject -ComputerName $PC win32_bios | select-object SerialNumber
+
     } else {
         write-host -ForegroundColor Red $PC : "FAILED"
         $PingStatus = $false
@@ -59,6 +63,7 @@ Foreach($PC in $PCs) {
     # Build Final Objet Array
     Add-Member -InputObject $pingStatusArray -MemberType NoteProperty -Name PCShortName -Value $shortName
     Add-Member -InputObject $pingStatusArray -MemberType NoteProperty -Name PCName -Value $PC
+    Add-Member -InputObject $pingStatusArray -MemberType NoteProperty -Name ServiceTag -Value $serviceTag
     Add-Member -InputObject $pingStatusArray -MemberType NoteProperty -Name OnlineStatus -Value $PingStatus
     Add-Member -InputObject $pingStatusArray -MemberType NoteProperty -Name WUStatus -Value $WindowsUpdateList
     Add-Member -InputObject $pingStatusArray -MemberType NoteProperty -Name VirusDefDate -Value $VirusDefDate
